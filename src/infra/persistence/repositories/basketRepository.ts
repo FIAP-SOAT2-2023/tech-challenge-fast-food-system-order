@@ -1,10 +1,10 @@
-import ItemModel from "infra/persistence/models/itemModel";
-import BasketModel from "infra/persistence/models/basketsModel";
 
 import { v4 as uuidv4 } from "uuid";
-import { Basket } from "core/domain/entities/basket";
-import { IBasketRepository } from "core/domain/repositories/basketRepository";
-import { Customer } from "core/domain/entities/customer";
+import {IBasketRepository} from "../../../core/domain/repositories/basketRepository";
+import {Basket} from "../../../core/domain/entities/basket";
+import {Customer} from "../../../core/domain/entities/customer";
+import BasketModel from "../models/basketsModel";
+import ItemModel from "../models/itemModel";
 
 export class BasketRepository implements IBasketRepository {
   createBasket(basketNew: Basket): Promise<Basket> {

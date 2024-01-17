@@ -1,5 +1,6 @@
-import { Products } from "core/domain/entities/products";
-import { IProductRepository } from "core/domain/repositories/productRepository";
+import {IProductRepository} from "../../../core/domain/repositories/productRepository";
+import {Products} from "../../../core/domain/entities/products";
+
 
 export class ProductRepository implements IProductRepository {
   getProductByCategory(category: string): Promise<Products> {

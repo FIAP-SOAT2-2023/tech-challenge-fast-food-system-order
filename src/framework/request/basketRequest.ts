@@ -1,8 +1,8 @@
 import { Length, IsNotEmpty, Max, Min } from "class-validator";
 import { ItemRequest } from "./ItemRequest";
+import {Basket} from "../../core/domain/entities/basket";
+import {Order} from "../../core/domain/entities/order";
 
-import { Order } from "core/domain/entities/order";
-import { Basket } from "core/domain/entities/basket";
 
 export class BasketRequest implements Basket {
   declare id: number;

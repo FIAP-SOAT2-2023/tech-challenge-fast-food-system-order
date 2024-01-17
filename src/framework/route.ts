@@ -1,22 +1,22 @@
 import express, { Request, Response, NextFunction } from "express";
-import "infra/persistence/config/mysqlConfig";
+import "../infra/persistence/config/mysqlConfig";
 
 import swaggerUi from "swagger-ui-express";
-import swaggerDocs from "infra/docs/swagger";
-import { BasketRepository } from "infra/persistence/repositories/basketRepository";
+import swaggerDocs from "../infra/docs/swagger";
 
-import { OrderRepository } from "infra/persistence/repositories/orderRepository";
-import { IOrderRepository } from "core/domain/repositories/orderRepository";
-import { BasketUseCase } from "core/applications/usecases/basketUseCase";
 import { BasketController } from "./controllers/basketController";
-import { OrderStatusRepository } from "infra/persistence/repositories/orderStatusRepository";
-import { OrderStatusUseCase } from "core/applications/usecases/orderStatusUseCase";
 import { OrderStatusController } from "./controllers/orderStatusController";
-import { OrderUseCase } from "core/applications/usecases/orderUseCase";
 import { OrderController } from "./controllers/orderController";
-import { CustomerRepository } from "infra/persistence/repositories/customerRepository";
-import { ProductRepository } from "infra/persistence/repositories/productRepository";
-import { PaymentRepository } from "infra/persistence/repositories/paymentRepository";
+import {CustomerRepository} from "../infra/persistence/repositories/customerRepository";
+import {ProductRepository} from "../infra/persistence/repositories/productRepository";
+import {PaymentRepository} from "../infra/persistence/repositories/paymentRepository";
+import {OrderUseCase} from "../core/applications/usecases/orderUseCase";
+import {OrderStatusRepository} from "../infra/persistence/repositories/orderStatusRepository";
+import {OrderStatusUseCase} from "../core/applications/usecases/orderStatusUseCase";
+import {BasketRepository} from "../infra/persistence/repositories/basketRepository";
+import {IOrderRepository} from "../core/domain/repositories/orderRepository";
+import {BasketUseCase} from "../core/applications/usecases/basketUseCase";
+import {OrderRepository} from "../infra/persistence/repositories/orderRepository";
 
 export interface Error {
   message?: string;

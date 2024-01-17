@@ -1,5 +1,6 @@
-import { Payment } from "core/domain/entities/payment";
-import { IPaymentRepository } from "core/domain/repositories/paymentRepository";
+import {Payment} from "../../../core/domain/entities/payment";
+import {IPaymentRepository} from "../../../core/domain/repositories/paymentRepository";
+
 
 export class PaymentRepository implements IPaymentRepository {
   createPayment(data: Payment): Promise<Payment> {

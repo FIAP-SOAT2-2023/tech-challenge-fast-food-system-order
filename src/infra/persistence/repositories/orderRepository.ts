@@ -1,11 +1,11 @@
 import { Op, Sequelize } from "sequelize";
-import OrderModel from "infra/persistence/models/orderModel";
-import BasketModel from "infra/persistence/models/basketsModel";
-import ItemModel from "infra/persistence/models/itemModel";
-import { Order } from "core/domain/entities/order";
-import { IOrderRepository } from "core/domain/repositories/orderRepository";
 import OrderStatusModel from "../models/orderStatusModel";
-import OrderStatusKey from "framework/enum/orderStatus";
+import OrderStatusKey from "../../../framework/enum/orderStatus";
+import {IOrderRepository} from "../../../core/domain/repositories/orderRepository";
+import BasketModel from "../models/basketsModel";
+import OrderModel from "../models/orderModel";
+import ItemModel from "../models/itemModel";
+import {Order} from "../../../core/domain/entities/order";
 
 export class OrderRepository implements IOrderRepository {
   async createOrder(orderNew: Order): Promise<Order> {

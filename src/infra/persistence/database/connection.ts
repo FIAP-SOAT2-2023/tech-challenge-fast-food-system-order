@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 import "dotenv/config";
-import { runMigrations } from "infra/persistence/config/run-migrations";
+import { runMigrations } from "../config/run-migrations";
 
 const dbName: string = process.env.DB_NAME as string;
 const dbUser: string = process.env.DB_USER as string;

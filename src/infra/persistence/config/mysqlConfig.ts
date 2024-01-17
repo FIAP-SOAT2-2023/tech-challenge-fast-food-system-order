@@ -1,12 +1,13 @@
-import OrderModel from "infra/persistence/models/orderModel";
-import basketsModel from "infra/persistence/models/basketsModel";
-import itensModel from "infra/persistence/models/itemModel";
+
 import OrderStatusModel from "../models/orderStatusModel";
+import OrderModel from "../models/orderModel";
+import basketsModel from "../models/basketsModel";
+import ItemModel from "../models/itemModel";
 
 export default () => {
   // Criação da tabela no banco de dados
   basketsModel.sync();
-  itensModel.sync();
+  ItemModel.sync();
   OrderModel.sync();
   OrderStatusModel.sync();
 };

@@ -1,4 +1,3 @@
-import { Customer } from "./customer";
 import { Item } from "./item";
 import { Order } from "./order";
 import { Products } from "./products";

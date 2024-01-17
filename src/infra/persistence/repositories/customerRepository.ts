@@ -1,7 +1,9 @@
-import { Customer } from "core/domain/entities/customer";
-import { ICustomerRepository } from "core/domain/repositories/customerRepository";
+
 
 //const axios = require("axios");
+import {ICustomerRepository} from "../../../core/domain/repositories/customerRepository";
+import {Customer} from "../../../core/domain/entities/customer";
+
 export class CustomerRepository implements ICustomerRepository {
   getCustomerIdByDocument(document: string): Promise<Customer> {
     return new Promise<Customer>(async (resolve, reject) => {

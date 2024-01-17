@@ -1,5 +1,5 @@
 import { Length, Min, Max, MaxLength, IsNotEmpty } from "class-validator";
-import { Item } from "core/domain/entities/item";
+import {Item} from "../../core/domain/entities/item";
 
 export class ItemRequest implements Item {
   @Max(20, { message: "name should be between 2 and 100 characters" })
