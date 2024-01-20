@@ -29,6 +29,7 @@ jobs:
   ecr:
     name: Build Image
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     needs: sonarcloud
     steps:
       - name: Checkout code
