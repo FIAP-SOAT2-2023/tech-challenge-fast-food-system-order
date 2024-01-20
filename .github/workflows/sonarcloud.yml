@@ -51,6 +51,6 @@ jobs:
           ECR_REPOSITORY: docker_nodejs_demo
           IMAGE_TAG: nodejs_demo_image
         run: |
-          docker build -t fastfoodordering:latest .
+          docker build --platform=linux/amd64 -t fastfoodordering .
           docker tag fastfoodordering:latest 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
           docker push 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
