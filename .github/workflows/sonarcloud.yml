@@ -20,7 +20,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Validar Variavel
-        run:
+        run: |
           echo "Envs: ${{ env.AWS_REGION }}"
   sonarcloud:
     name: SonarCloud
