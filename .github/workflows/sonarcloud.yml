@@ -44,7 +44,7 @@ jobs:
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
-          task-definition:  task-definition.json
+          task-definition: task-definition.json
           container-name: ${{ env.ECS_SERVICE }}
           image: 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
 
