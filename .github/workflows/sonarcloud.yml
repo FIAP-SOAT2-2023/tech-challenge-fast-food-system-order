@@ -6,10 +6,25 @@ on:
       - main
   pull_request:
     types: [opened, synchronize, reopened]
-
+env:
+  AWS_REGION: ${{ vars.AWS_REGION }}                   # set this to your preferred AWS region, e.g. us-west-1
+  ECR_REPOSITORY: ${{ vars.MY_ECR_REPOSITORY }}           # set this to your Amazon ECR repository name
+  ECS_SERVICE: ${{ vars.MY_ECS_SERVICE }}           # set this to your Amazon ECS service name
+  ECS_CLUSTER: ${{ vars.MY_ECS_CLUSTER }}          # set this to your Amazon ECS cluster name
+  ECS_TASK_DEFINITION: ${{ vars.MY_ECS_TASK_DEFINITION }} # set this to the path to your Amazon ECS task definition
+  # file, e.g. .aws/task-definition.json
+  CONTAINER_NAME: ${{ vars.MY_CONTAINER_NAME }}           # set this to the name of the container in the
+    # containerDefinitions section of your task definition
 jobs:
+  exemplo:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar Variavel
+        run:
+          echo "Envs: ${{ env.AWS_REGION }}"
   sonarcloud:
     name: SonarCloud
+    needs: exemplo
     runs-on: ubuntu-latest
     outputs:
       # Adicione uma saída para indicar se a análise teve sucesso
@@ -55,3 +70,37 @@ jobs:
           docker build --platform=linux/amd64 -t fastfoodordering .
           docker tag fastfoodordering:latest 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
           docker push 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: AKIA5J5IBY5Y7MPWVGHX
+          aws-secret-access-key: 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
+          aws-region: us-east-1
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v1
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ${{ env.ECS_TASK_DEFINITION }}
+          container-name: ${{ env.CONTAINER_NAME }}
+          image: 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE }}
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
