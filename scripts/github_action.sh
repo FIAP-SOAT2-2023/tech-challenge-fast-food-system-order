@@ -1,0 +1,1 @@
+act --container-architecture linux/amd64 --env-file ../github/github.env
