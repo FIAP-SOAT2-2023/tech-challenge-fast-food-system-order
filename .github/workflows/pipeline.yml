@@ -31,8 +31,8 @@ jobs:
         id: sonarcloud
         uses: SonarSource/sonarcloud-github-action@master
         env:
-          GITHUB_TOKEN: afe81f9f507f8ecc5814d0b921454dfd6a210095
-          SONAR_TOKEN: 70e6b0bfbcdf67d25713b5be9d0dcd5cff9cd5fe
+          GITHUB_TOKEN: ${{ secrets.GITHUBTOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
 
   ecr:
     name: Build Image
@@ -46,9 +46,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: AKIA5J5IBY5Y7MPWVGHX
-          aws-secret-access-key: 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
-          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -63,6 +63,13 @@ jobs:
           docker build --platform=linux/amd64 -t fastfoodordering .
           docker tag fastfoodordering:latest 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
           docker push 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
+      - name: Update Version
+        run: echo "::set-env name=IMAGE_VERSION::$(date +'%Y%m%d%H%M%S')"
+      - name: Deploy to ECR
+        run: |
+          docker tag your-image-name:latest ${{ steps.login-ecr.outputs.registry }}/${{ github.repository_owner }}/your-image-name:${{ env.IMAGE_VERSION }}
+          docker push ${{ steps.login-ecr.outputs.registry }}/${{ github.repository_owner }}/your-image-name:${{ env.IMAGE_VERSION }}
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
@@ -74,9 +81,9 @@ jobs:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v1
         with:
-          aws-access-key-id: AKIA5J5IBY5Y7MPWVGHX
-          aws-secret-access-key: 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
-          aws-region: us-east-1
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
 
       - name: Login to Amazon ECR
         id: login-ecr
