@@ -15,6 +15,7 @@ env:
   # file, e.g. .aws/task-definition.json
   CONTAINER_NAME: ${{ vars.MY_CONTAINER_NAME }}           # set this to the name of the container in the
     # containerDefinitions section of your task definition
+  IMAGE_VERSION: ${{ format('{0:%Y%m%d%H%M%S}', github.event.created_at) }}
 jobs:
   sonarcloud:
     name: SonarCloud
@@ -63,8 +64,6 @@ jobs:
           docker build --platform=linux/amd64 -t fastfoodordering .
           docker tag fastfoodordering:latest 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
           docker push 914643601265.dkr.ecr.us-east-1.amazonaws.com/fastfoodordering:latest
-      - name: Update Version
-        run: echo "::set-env name=IMAGE_VERSION::$(date +'%Y%m%d%H%M%S')"
       - name: Deploy to ECR
         run: |
           docker tag your-image-name:latest ${{ steps.login-ecr.outputs.registry }}/${{ github.repository_owner }}/your-image-name:${{ env.IMAGE_VERSION }}
