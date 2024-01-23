@@ -13,9 +13,9 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASS}
     ports:
-      - 3336:3306
+      - 3306:3306
     expose:
-      - 3336
+      - 3306
     volumes:
       - ./data/mysql:/var/lib/mysql
   fastfoodservice:
