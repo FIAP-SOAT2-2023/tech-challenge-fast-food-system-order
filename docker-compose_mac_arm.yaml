@@ -3,6 +3,7 @@ version: '3.8'
 services:
   mysqldb:
     image: mysql:8.0
+    platform: linux/arm64
     restart: unless-stopped
     env_file:
       - .env
@@ -12,21 +13,21 @@ services:
       - MYSQL_USER=${DB_USER}
       - MYSQL_PASSWORD=${DB_PASS}
     ports:
-      - 3306:3306
+      - 3336:3306
     expose:
-      - 3306
+      - 3336
     volumes:
       - ./data/mysql:/var/lib/mysql
   fastfoodservice:
     depends_on:
       - mysqldb
-    build: ./
+    build: .
     restart: unless-stopped
     ports:
       - 3000:3000
     environment:
       - DB_HOST=mysqldb
       - DB_USER=${DB_USER}
-      - DB_PASSWORD= ${DB_PASS}
+      - DB_PASSWORD=${DB_PASS}
       - DB_NAME=${DB_NAME}
-      - DB_PORT=${DB_PORT}
+      - DB_PORT=3306

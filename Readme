@@ -34,7 +34,7 @@ FastFoodSystem-FIAP.postman_collection.json
 ### Execução Windows
 
 ```
-docker compose -f "docker-compose.yml" up -d --build
+docker compose -f "docker-compose.yaml" up -d --build
 ```
 
 ### Execução linux/mac
