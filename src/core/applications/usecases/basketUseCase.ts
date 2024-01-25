@@ -1,19 +1,18 @@
-
 import { v4 as uuidv4 } from "uuid";
 
-import {Item} from "../../domain/entities/item";
-import {Basket} from "../../domain/entities/basket";
-import {Products} from "../../domain/entities/products";
-import {IBasketRepository} from "../../domain/repositories/basketRepository";
-import {IOrderRepository} from "../../domain/repositories/orderRepository";
+import { Item } from "../../domain/entities/item";
+import { Basket } from "../../domain/entities/basket";
+import { Products } from "../../domain/entities/products";
+import { IBasketRepository } from "../../domain/repositories/basketRepository";
+import { IOrderRepository } from "../../domain/repositories/orderRepository";
 import IOrderStatusRepository from "../../domain/repositories/statusRepository";
-import {ICustomerRepository} from "../../domain/repositories/customerRepository";
-import {IProductRepository} from "../../domain/repositories/productRepository";
-import {IPaymentRepository} from "../../domain/repositories/paymentRepository";
-import {IBasketUseCase} from "../../domain/usecases/IBasketUseCase";
-import {Payment} from "../../domain/entities/payment";
+import { ICustomerRepository } from "../../domain/repositories/customerRepository";
+import { IProductRepository } from "../../domain/repositories/productRepository";
+import { IPaymentRepository } from "../../domain/repositories/paymentRepository";
+import { IBasketUseCase } from "../../domain/usecases/IBasketUseCase";
+import { Payment } from "../../domain/entities/payment";
 import OrderStatusKey from "../../../framework/enum/orderStatus";
-import {Order} from "../../domain/entities/order";
+import { Order } from "../../domain/entities/order";
 
 export class BasketUseCase implements IBasketUseCase {
   constructor(
@@ -60,29 +59,27 @@ export class BasketUseCase implements IBasketUseCase {
       let expectedOrder = new Date();
 
       expectedOrder.setHours(expectedOrder.getHours() * 4);
+      paymentNew.orderId = (Math.random() * 20).toString();
       let paymentId: any = await this.paymentRepository.createPayment(
         paymentNew
       );
       paymentNew = { ...paymentNew, uuid: uuidv4() };
-      const orderPending: Order = {
-        basket: basketCreated,
-        payment: paymentId.paymentId,
-        status: orderStatus,
-        expected: expectedOrder,
-      };
 
-      const orderCreated = await this.orderRepository.createOrder(orderPending);
       basketPending.payment = await this.paymentRepository.createPayment(
         paymentNew
       );
-      /* Debito técnico: microserviço de Pagamento tem que nos passar a url do mercado livre de pagamento */
-      const checkoutUrl =
-        "https://www.mercadopago.com.br/checkout/v1/redirect?pref_id=136971995-d28f6df8-8d6d-4310-be5b-0935d83c4419";
+      const orderPending: Order = {
+        basket: basketCreated,
+        payment: basketPending.payment.id,
+        status: orderStatus,
+        expected: expectedOrder,
+      };
+      const orderCreated = await this.orderRepository.createOrder(orderPending);
 
       const basketResult: Basket = {
         order: orderCreated,
         ...basketCreated,
-        checkoutUrl: checkoutUrl,
+        checkoutUrl: basketPending.payment.checkoutUrl,
       };
 
       resolve(basketResult);
