@@ -1,10 +1,10 @@
 import { Payment } from "../../../core/domain/entities/payment";
 import { IPaymentRepository } from "../../../core/domain/repositories/paymentRepository";
-
+import "dotenv/config";
 export class PaymentRepository implements IPaymentRepository {
   createPayment(data: Payment): Promise<Payment> {
     const newPayment = { orderId: data.orderId, totalPrice: data.totalPrice };
-    const apiUrl = "http:localhost:3000/payment";
+    const apiUrl = process.env.URL_ORDERS;
     const requestOptions = {
       method: "POST",
       headers: {

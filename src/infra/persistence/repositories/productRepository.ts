@@ -1,14 +1,22 @@
 import { IProductRepository } from "../../../core/domain/repositories/productRepository";
 import { Products } from "../../../core/domain/entities/products";
+import ProductModel from "../models/productsModel";
 
 export class ProductRepository implements IProductRepository {
   getProductByCategory(category: string): Promise<Products> {
     return new Promise<Products>(async (resolve, reject) => {
-      fetch(`http:localhost:4200/product?category=${category}`)
-        .then(function (response) {
-          resolve(response.json());
-        })
-        .catch((err) => reject(err));
+      const product = await ProductModel.findOne({
+        where: {
+          category,
+        },
+      });
+      if (!product) {
+        reject("Produto não encontrado.");
+      }
+      resolve({
+        productId: product.id,
+        unitPrice: product.unitPrice,
+      } as Products);
     });
   }
 }
