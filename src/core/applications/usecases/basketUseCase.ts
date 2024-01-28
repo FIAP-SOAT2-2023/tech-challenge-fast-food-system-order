@@ -39,13 +39,11 @@ export class BasketUseCase implements IBasketUseCase {
           );
 
           if (result !== null) {
-            result.map((response: Products) => {
-              basketPending.items?.push({
-                unitPrice: response.unitPrice,
-                productId: response.productId,
-                quantity: item.quantity,
-              } as Item);
-            });
+            basketPending.items?.push({
+              unitPrice: result.unitPrice,
+              productId: result.productId,
+              quantity: item.quantity,
+            } as Item);
           }
         }
       }

@@ -1,8 +1,7 @@
-
 import { v4 as uuidv4 } from "uuid";
-import {IBasketRepository} from "../../../core/domain/repositories/basketRepository";
-import {Basket} from "../../../core/domain/entities/basket";
-import {Customer} from "../../../core/domain/entities/customer";
+import { IBasketRepository } from "../../../core/domain/repositories/basketRepository";
+import { Basket } from "../../../core/domain/entities/basket";
+import { Customer } from "../../../core/domain/entities/customer";
 import BasketModel from "../models/basketsModel";
 import ItemModel from "../models/itemModel";
 
@@ -16,11 +15,7 @@ export class BasketRepository implements IBasketRepository {
         isTakeOut,
         totalPrice,
         uuid: uuidv4(),
-        customerId: customer
-          .map((response: Customer) => {
-            return response.uuid;
-          })
-          .toString(),
+        customerId: customer.uuid.toString(),
       });
 
       // ITEMS
