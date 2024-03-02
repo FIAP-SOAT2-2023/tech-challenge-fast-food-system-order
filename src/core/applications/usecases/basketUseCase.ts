@@ -13,7 +13,8 @@ import { IBasketUseCase } from "../../domain/usecases/IBasketUseCase";
 import { Payment } from "../../domain/entities/payment";
 import OrderStatusKey from "../../../framework/enum/orderStatus";
 import { Order } from "../../domain/entities/order";
-
+import { SQSClient, SendMessageCommand } from "@aws-sdk/client-sqs";
+import "dotenv/config";
 export class BasketUseCase implements IBasketUseCase {
   constructor(
     private readonly basketRepository: IBasketRepository,
@@ -80,6 +81,28 @@ export class BasketUseCase implements IBasketUseCase {
         checkoutUrl: basketPending.payment.checkoutUrl,
       };
 
+      const sqsClient = new SQSClient({
+        region: process.env.AWS_REGION,
+        credentials: {
+          accessKeyId: process.env.AWS_ACCESSKEY,
+          secretAccessKey: process.env.AWS_SECRETKEY,
+        },
+      });
+
+      const params = {
+        QueueUrl: process.env.AWS_PAYMENT_QUEE01,
+        MessageBody: `Olá pagamento: ${basketResult.order?.payment} realizado com sucesso, segue número do Pedido: ${basketResult.order.code}
+     `,
+        MessageGroupId: process.env.AWS_GRUPO01,
+      };
+      const command = new SendMessageCommand(params);
+      const response = await sqsClient.send(command);
+
+      /* criar a fila de compesatoria pagamento */
+      console.log(
+        "As Mensagem foram enviada com sucesso. ID da mensagem:",
+        response.MessageId
+      );
       resolve(basketResult);
     });
   }
