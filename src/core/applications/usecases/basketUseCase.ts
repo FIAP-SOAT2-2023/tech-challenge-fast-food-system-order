@@ -89,20 +89,44 @@ export class BasketUseCase implements IBasketUseCase {
         },
       });
 
-      const params = {
-        QueueUrl: process.env.AWS_PAYMENT_QUEE01,
-        MessageBody: `Olá pagamento: ${basketResult.order?.payment} realizado com sucesso, segue número do Pedido: ${basketResult.order.code}
-     `,
-        MessageGroupId: process.env.AWS_GRUPO01,
-      };
-      const command = new SendMessageCommand(params);
-      const response = await sqsClient.send(command);
+      let items = "";
+      for (const item of basketResult.items) {
+        items += `Categoria: ${item.category} quantidade: ${item.quantity} observação: ${item.observations}\n`;
+      }
+      try {
+        if (basketResult.order?.payment !== undefined) {
+          const params = {
+            QueueUrl: process.env.AWS_PAYMENT_QUEE01,
+            MessageBody: `Olá o pagamento: ${basketResult.order?.payment} foi realizado com sucesso, segue número do Pedido: ${basketResult.order.code}\nDescrição dos items: ${items}
+         `,
+            MessageGroupId: process.env.AWS_GRUPO01,
+          };
+          const command = new SendMessageCommand(params);
+          const response = await sqsClient.send(command);
 
-      /* criar a fila de compesatoria pagamento */
-      console.log(
-        "As Mensagem foram enviada com sucesso. ID da mensagem:",
-        response.MessageId
-      );
+          console.log(
+            "As Mensagem foram enviada com sucesso. ID da mensagem:",
+            response.MessageId
+          );
+        } else {
+          const params = {
+            QueueUrl: process.env.AWS_COMPESATION_ORDER_QUEE01,
+            MessageBody: `Houve erro no pagamento, segue número do Pedido: ${basketResult.order.code}\nFavor desfazer a reserva de itens para este pedido
+         `,
+            MessageGroupId: process.env.AWS_GRUPO01,
+          };
+          const command = new SendMessageCommand(params);
+          const response = await sqsClient.send(command);
+
+          console.log(
+            "As Mensagem foram enviada com sucesso. ID da mensagem:",
+            response.MessageId
+          );
+        }
+      } catch (error) {
+        console.error("Erro ao enviar mensagens para fila:", error);
+      }
+
       resolve(basketResult);
     });
   }
