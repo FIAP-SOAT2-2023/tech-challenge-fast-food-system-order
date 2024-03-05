@@ -104,6 +104,15 @@ export class BasketUseCase implements IBasketUseCase {
           const command = new SendMessageCommand(params);
           const response = await sqsClient.send(command);
 
+          const params2 = {
+            QueueUrl: process.env.AWS_ORDER_QUEE02,
+            MessageBody: `Olá ${basketResult.customer?.firstName} o pagamento: ${basketResult.order?.payment} foi realizado com sucesso, segue número do Pedido: ${basketResult.order.code}\nEm breve receberá mensagem da preparação do pedido
+         `,
+            MessageGroupId: process.env.AWS_GRUPO01,
+          };
+          const command2 = new SendMessageCommand(params2);
+          const response2 = await sqsClient.send(command2);
+
           console.log(
             "As Mensagem foram enviada com sucesso. ID da mensagem:",
             response.MessageId
