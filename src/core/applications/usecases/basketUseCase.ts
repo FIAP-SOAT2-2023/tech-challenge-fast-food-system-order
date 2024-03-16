@@ -93,12 +93,24 @@ export class BasketUseCase implements IBasketUseCase {
       for (const item of basketResult.items) {
         items += `Categoria: ${item.category} quantidade: ${item.quantity} observação: ${item.observations}\n`;
       }
+
+      //  MessageBody: `Olá o pagamento: ${basketResult.order?.payment} foi realizado com sucesso, segue número do Pedido: ${basketResult.order.code}\nDescrição dos items: ${items}
+        //          `,
+
+        const messageBody = {
+            basket: basketResult,
+
+        }
+
+      const messageJSON = JSON.stringify(messageBody);
+
+      console.debug("Mensagem a ser enviada: ", messageJSON)
+
       try {
         if (basketResult.order?.payment !== undefined) {
           const params = {
             QueueUrl: process.env.AWS_PAYMENT_QUEE01,
-            MessageBody: `Olá o pagamento: ${basketResult.order?.payment} foi realizado com sucesso, segue número do Pedido: ${basketResult.order.code}\nDescrição dos items: ${items}
-         `,
+            MessageBody: messageJSON,
             MessageGroupId: process.env.AWS_GRUPO01,
           };
           const command = new SendMessageCommand(params);

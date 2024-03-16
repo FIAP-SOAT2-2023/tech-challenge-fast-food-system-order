@@ -15,7 +15,7 @@ export class BasketRepository implements IBasketRepository {
         isTakeOut,
         totalPrice,
         uuid: uuidv4(),
-        customerId: customer.uuid.toString(),
+        customerId: customer.uuid
       });
 
       // ITEMS
