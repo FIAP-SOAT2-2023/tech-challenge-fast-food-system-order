@@ -10,4 +10,7 @@ export interface IBasketUseCase {
   ): Promise<Basket>;
 
   getAllPendingOrders(): Promise<Order[]>;
+
+   cancelBasket(basketId: string): Promise<void>
+
 }

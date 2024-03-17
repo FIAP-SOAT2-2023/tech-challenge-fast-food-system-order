@@ -66,23 +66,11 @@ export class BasketUseCase implements IBasketUseCase {
 
             expectedOrder.setHours(expectedOrder.getHours() * 4);
 
-            //paymentNew.orderId = (Math.random() * 20).toString();
-
-            /*
-            let paymentId: any = await this.paymentRepository.createPayment(
-              paymentNew
-            );
-            paymentNew = { ...paymentNew, uuid: uuidv4() };
-
-            basketPending.payment = await this.paymentRepository.createPayment(
-              paymentNew
-            );
-
-             */
+            const uuid = "PAY-" + uuidv4();
 
             const orderPending: Order = {
                 basket: basketCreated,
-                payment: (Math.random() * 20),
+                payment: uuid,
                 status: orderStatus,
                 expected: expectedOrder,
             };
@@ -107,6 +95,24 @@ export class BasketUseCase implements IBasketUseCase {
         return new Promise<Order[]>(async (resolve) => {
             const orderList = await this.orderRepository.getAllPendingOrders();
             resolve(orderList);
+        });
+    }
+
+
+    async cancelBasket(basketId: string): Promise<void> {
+        return new Promise<void>(async (resolve) => {
+            const basket = await this.basketRepository.findBasketById(basketId);
+            if (basket) {
+                const order = await this.orderRepository.findOrderByUUID(basket.order.uuid);
+                if (order) {
+                    const orderStatus = await this.orderStatusRepository.getByKey(
+                        OrderStatusKey.REVERSED
+                    );
+                    order.status = orderStatus;
+                    await this.orderRepository.updateOrderById(basket.order.uuid, order);
+                }
+            }
+            resolve();
         });
     }
 }

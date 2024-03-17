@@ -1,4 +1,5 @@
 import { Order } from "../entities/order";
+import OrderModel from "../../../infra/persistence/models/orderModel";
 
 
 export interface IOrderRepository {
@@ -8,4 +9,5 @@ export interface IOrderRepository {
 
   updateOrderById(id: string, body: Order): Promise<Order>
 
+  findOrderByUUID(uuid: string): Promise<Order>;
 }

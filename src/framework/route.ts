@@ -17,6 +17,7 @@ import { BasketRepository } from "../infra/persistence/repositories/basketReposi
 import { IOrderRepository } from "../core/domain/repositories/orderRepository";
 import { BasketUseCase } from "../core/applications/usecases/basketUseCase";
 import { OrderRepository } from "../infra/persistence/repositories/orderRepository";
+import listenSQSMessages from "./listener/OrderCompensation";
 
 export interface Error {
   message?: string;
@@ -71,6 +72,8 @@ export class Route {
 
     const orderUseCase = new OrderUseCase(orderRepository);
     const orderController = new OrderController(orderUseCase);
+
+    listenSQSMessages(orderUseCase, orderStatusUseCase, orderRepository);
 
     const app = express();
     app.use(express.json());

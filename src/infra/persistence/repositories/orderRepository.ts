@@ -8,6 +8,21 @@ import ItemModel from "../models/itemModel";
 import { Order } from "../../../core/domain/entities/order";
 
 export class OrderRepository implements IOrderRepository {
+
+  async findOrderByUUID(uuid: string): Promise<Order> {
+    return new Promise<Order>(async (resolve, reject) => {
+      const orderModel = await OrderModel.findOne({where: {paymentId: uuid}});
+      if (orderModel) {
+        const orderStatusModel = await OrderStatusModel.findOne({where: {id: orderModel.statusId}});
+        const orderResult = {...orderModel.dataValues, status: orderStatusModel};
+        resolve(orderResult)
+      }
+      else reject();
+    });
+  }
+
+
+
   async createOrder(orderNew: Order): Promise<Order> {
     return new Promise<Order>(async (resolve) => {
       const { basket, payment, status } = orderNew;
@@ -135,7 +150,7 @@ export class OrderRepository implements IOrderRepository {
     return new Promise<Order>(async (resolve) => {
       const order = await OrderModel.findOne({
         where: {
-          uuid: id,
+          paymentId: id,
         },
       });
 
@@ -145,7 +160,7 @@ export class OrderRepository implements IOrderRepository {
 
       const orderStatus = await OrderStatusModel.findOne({
         where: {
-          key: body.status.toString(),
+          key: body.status.key
         },
       });
 
@@ -155,12 +170,12 @@ export class OrderRepository implements IOrderRepository {
 
       await order.update(
         { statusId: orderStatus?.id },
-        { where: { uuid: id } }
+        { where: { paymentId: id } }
       );
 
       const orderUpdated = await OrderModel.findOne({
         where: {
-          uuid: id,
+          paymentId: id,
         },
         include: [{ model: OrderStatusModel, as: "status" }],
       });

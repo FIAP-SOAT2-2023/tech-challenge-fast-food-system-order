@@ -26,7 +26,7 @@ class OrderModel extends Model<
   declare statusId: ForeignKey<OrderStatusModel["id"]>;
   declare uuid: CreationOptional<string>;
   declare code: CreationOptional<string>;
-  declare paymentId: CreationOptional<number>;
+  declare paymentId: CreationOptional<string>;
   declare basket?: NonAttribute<BasketModel>;
   declare status?: NonAttribute<OrderStatusModel>;
   public declare static associations: {
@@ -62,7 +62,7 @@ OrderModel.init(
       allowNull: false,
     },
     paymentId: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.STRING,
       allowNull: false,
     },
     doneAt: { type: DataTypes.DATE, allowNull: true },

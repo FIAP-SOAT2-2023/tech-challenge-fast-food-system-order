@@ -6,6 +6,29 @@ import BasketModel from "../models/basketsModel";
 import ItemModel from "../models/itemModel";
 
 export class BasketRepository implements IBasketRepository {
+
+  findBasketById(uuid: string): Promise<Basket> {
+    return new Promise<Basket>(async (resolve, reject) => {
+      let basket = await BasketModel.findOne({
+        where: { uuid },
+        include: [ItemModel],
+      });
+      if (basket) {
+        const { id, customerId, ...basketValues } = basket.dataValues;
+        const items = basket.items.map((item) => {
+          const { id, basketId, ...itemValues } = item.dataValues;
+          return itemValues;
+        });
+        let basketResult: Basket = {
+          ...basketValues,
+          items,
+        };
+        resolve(basketResult);
+      } else {
+        reject("Basket not found");
+      }
+    });
+  }
   createBasket(basketNew: Basket): Promise<Basket> {
     return new Promise<Basket>(async (resolve, reject) => {
       const { isTakeOut, totalPrice, customer } = basketNew;

@@ -17,6 +17,14 @@ com o banco de dados porque vai ser a primeira vez que o banco sobe e demora um 
 aguardar uns 2 a 3 minutinhos para tentar acessar aplicacao via swagger
 ```
 
+### Migrates
+criar um novo migrate
+```
+db-migrate create add-people --sql-file
+
+link: https://db-migrate.readthedocs.io/en/latest/Getting%20Started/usage
+
+
 ### Swagger
 
 ```
