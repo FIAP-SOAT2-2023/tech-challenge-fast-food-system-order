@@ -18,6 +18,8 @@ import { IOrderRepository } from "../core/domain/repositories/orderRepository";
 import { BasketUseCase } from "../core/applications/usecases/basketUseCase";
 import { OrderRepository } from "../infra/persistence/repositories/orderRepository";
 import listenSQSMessages from "./listener/OrderCompensation";
+import { ProductController } from "./controllers/productsController";
+import { ProductsUseCase } from "../core/applications/usecases/productsUseCase";
 
 export interface Error {
   message?: string;
@@ -67,6 +69,9 @@ export class Route {
     );
     const basketController = new BasketController(basketService);
 
+    const productUseCase = new ProductsUseCase(productRepository);
+    const productController = new ProductController(productUseCase);
+
     const orderStatusUseCase = new OrderStatusUseCase(orderStatusRepository);
     const orderStatusController = new OrderStatusController(orderStatusUseCase);
 
@@ -88,6 +93,15 @@ export class Route {
       }
     });
 
+    app.get("/products", async (req, resp, next) => {
+      await Route.asyncWrapper(
+        req,
+        resp,
+        next,
+        productController.getAllProducts.bind(productController)
+      );
+    });
+
     app.post("/orders", async (req, resp, next) => {
       await Route.asyncWrapper(
         req,
@@ -96,6 +110,7 @@ export class Route {
         basketController.create.bind(basketController)
       );
     });
+
     app.get("/orders/pending", async (req, resp, next) => {
       await Route.asyncWrapper(
         req,
