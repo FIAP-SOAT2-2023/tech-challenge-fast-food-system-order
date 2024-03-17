@@ -17,7 +17,7 @@ export class PaymentRepository implements IPaymentRepository{
         });
 
         const messageJSON = JSON.stringify({
-          basket: basketResult, customer: customer
+          ...basketResult, customer
 
         });
 
@@ -26,9 +26,10 @@ export class PaymentRepository implements IPaymentRepository{
         try {
 
             const params = {
-                QueueUrl: process.env.AWS_PAYMENT_QUEE01,
+                QueueUrl: process.env.AWS_ORDER_QUEE01,
                 MessageBody: messageJSON,
                 MessageGroupId: process.env.AWS_GRUPO01,
+                MessageDeduplicationId: basketResult.uuid
             };
             const command = new SendMessageCommand(params);
             const response = await sqsClient.send(command);
@@ -40,7 +41,7 @@ export class PaymentRepository implements IPaymentRepository{
 
         } catch (error) {
             console.error("Erro ao enviar mensagens para fila:", error);
-
+            /*
             const params = {
                 QueueUrl: process.env.AWS_COMPESATION_ORDER_QUEE01,
                 MessageBody: `Houve erro no pagamento, segue número do Pedido: ${basketResult.order.code}\nFavor desfazer a reserva de itens para este pedido
@@ -54,6 +55,8 @@ export class PaymentRepository implements IPaymentRepository{
                 "As Mensagem foram enviada com sucesso. ID da mensagem:",
                 response.MessageId
             );
+
+             */
         }
 
 

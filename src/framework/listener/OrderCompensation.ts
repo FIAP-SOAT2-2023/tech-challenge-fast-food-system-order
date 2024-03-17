@@ -33,26 +33,26 @@ const listenSQSMessages = async (  orderUseCase: IOrderUseCase, orderStatus: IOr
     const processMessage = async (message: AWS.SQS.Message) => {
         try {
             const body = JSON.parse(message.Body!);
-            console.log('Mensagem recebida:', body);
-            const orderId = body.orderId;
+            console.log('Mensagem de compensacao recebida:', body);
+            const paymentId = body.order?.payment || body.paymentId
 
             //basketUseCase.cancelBasket(orderId)
 
-            const order = await orderRepository.findOrderByUUID(orderId)
+            const order = await orderRepository.findOrderByUUID(paymentId);
 
             if (order) {
 
                 order.status = await orderStatus.getByKey("REVERSED");
 
-                await orderUseCase.updateOrderById(orderId, order);
+                await orderUseCase.updateOrderById(paymentId, order);
 
                 console.debug("success to cancel order: ", order);
             }
 
             /**/
 
-        } catch (Error) {
-            console.error('Erro ao processar mensagem:', Error);
+        } catch (error) {
+            console.error('Erro ao processar mensagem:', error);
         } finally {
             // Upon successful processing, delete the message from the queue
             await sqsClient.send(new DeleteMessageCommand({

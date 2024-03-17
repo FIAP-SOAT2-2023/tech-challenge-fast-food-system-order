@@ -12,7 +12,7 @@ export class BasketRequest implements Basket {
   @IsNotEmpty({ message: "document is required" })
   declare document?: string;
 
-  @Max(10, { message: "Total Price should be between 2 and 10 characters" })
+  @Max(100000, { message: "Total Price should be between 2 and 10 characters" })
   @Min(2, { message: "Total Price should be between 2 and 10 characters" })
   @IsNotEmpty({ message: "Total Price is required" })
   declare totalPrice?: number;
