@@ -17,7 +17,8 @@ import { BasketRepository } from "../infra/persistence/repositories/basketReposi
 import { IOrderRepository } from "../core/domain/repositories/orderRepository";
 import { BasketUseCase } from "../core/applications/usecases/basketUseCase";
 import { OrderRepository } from "../infra/persistence/repositories/orderRepository";
-import listenSQSMessages from "./listener/OrderCompensation";
+import listenSQSOrderCompensation from "./listener/OrderCompensation";
+import listenSQSPreparation from "./listener/Preparation";
 import { ProductController } from "./controllers/productsController";
 import { ProductsUseCase } from "../core/applications/usecases/productsUseCase";
 
@@ -78,7 +79,8 @@ export class Route {
     const orderUseCase = new OrderUseCase(orderRepository);
     const orderController = new OrderController(orderUseCase);
 
-    listenSQSMessages(orderUseCase, orderStatusUseCase, orderRepository);
+    listenSQSOrderCompensation(orderUseCase, orderStatusUseCase, orderRepository);
+    listenSQSPreparation(orderUseCase, orderStatusUseCase, orderRepository);
 
     const app = express();
     app.use(express.json());
@@ -125,7 +127,7 @@ export class Route {
         req,
         resp,
         next,
-        orderController.updateOrderById.bind(orderController)
+        orderController.updateOrderByPaymentId.bind(orderController)
       );
     });
 

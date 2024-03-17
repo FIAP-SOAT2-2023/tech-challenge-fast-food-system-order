@@ -146,7 +146,7 @@ export class OrderRepository implements IOrderRepository {
     });
   }
 
-  async updateOrderById(id: string, body: Order): Promise<Order> {
+  async updateOrderByPaymentId(id: string, body: Order): Promise<Order> {
     return new Promise<Order>(async (resolve) => {
       const order = await OrderModel.findOne({
         where: {

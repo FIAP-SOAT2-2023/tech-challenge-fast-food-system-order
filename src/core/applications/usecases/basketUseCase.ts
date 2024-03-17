@@ -109,7 +109,7 @@ export class BasketUseCase implements IBasketUseCase {
                         OrderStatusKey.REVERSED
                     );
                     order.status = orderStatus;
-                    await this.orderRepository.updateOrderById(basket.order.uuid, order);
+                    await this.orderRepository.updateOrderByPaymentId(basket.order.uuid, order);
                 }
             }
             resolve();

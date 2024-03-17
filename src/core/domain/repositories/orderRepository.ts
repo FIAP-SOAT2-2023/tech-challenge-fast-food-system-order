@@ -7,7 +7,7 @@ export interface IOrderRepository {
 
   getAllPendingOrders(): Promise<Order[]>;
 
-  updateOrderById(id: string, body: Order): Promise<Order>
+  updateOrderByPaymentId(id: string, body: Order): Promise<Order>
 
   findOrderByUUID(uuid: string): Promise<Order>;
 }
