@@ -19,4 +19,21 @@ export class ProductRepository implements IProductRepository {
       } as Products);
     });
   }
+
+  async getAllProducts(): Promise<Products[]> {
+    const products = await ProductModel.findAll({
+      attributes: {
+        exclude: ["id"],
+      },
+    });
+
+    const mappedProducts: Products[] = products.map(product => ({
+      productId: product.id,
+      unitPrice: product.unitPrice,
+      quantity: 0,
+      category: product.category,
+    }));
+
+    return mappedProducts;
+  }
 }

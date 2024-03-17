@@ -1,23 +1,16 @@
 import * as AWS from 'aws-sdk';
-import {BasketUseCase} from "../../core/applications/usecases/basketUseCase";
 import {DeleteMessageCommand, ReceiveMessageCommand, SQSClient} from "@aws-sdk/client-sqs";
+
 import {IOrderUseCase} from "../../core/domain/usecases/IOrderUseCase";
-import {OrderStatus} from "../../core/domain/entities/orderStatus";
 import {IOrderStatusUseCase} from "../../core/domain/usecases/IOrderStatusUseCase";
-import {Order} from "../../core/domain/entities/order";
 import {IOrderRepository} from "../../core/domain/repositories/orderRepository";
-import orderStatus from "../enum/orderStatus";
 
-interface SQSMessage {
-    Body?: string;
-}
 
-interface SQSReceiveMessageResponse {
-    Messages?: AWS.SQS.Message[];
-}
-
-const listenSQSMessages = async (  orderUseCase: IOrderUseCase, orderStatus: IOrderStatusUseCase, orderRepository: IOrderRepository) => {
-
+const listenSQSMessages = async (
+    orderUseCase: IOrderUseCase,
+    orderStatus: IOrderStatusUseCase,
+    orderRepository: IOrderRepository
+) => {
     const sqsClient = new SQSClient({
         region: process.env.AWS_REGION,
         credentials: {
@@ -26,47 +19,36 @@ const listenSQSMessages = async (  orderUseCase: IOrderUseCase, orderStatus: IOr
         },
     });
 
-    // Criar um objeto SQS
-    //const sqs = new AWS.SQS({ apiVersion: '2012-11-05' });
-
-    // Função para processar mensagens recebidas
     const processMessage = async (message: AWS.SQS.Message) => {
         try {
             const body = JSON.parse(message.Body!);
-            console.log('Mensagem de compensacao recebida:', body);
+            console.log('Mensagem de preparação recebida:', body);
             const paymentId = body.order?.payment || body.paymentId
 
             const order = await orderRepository.findOrderByUUID(paymentId);
 
             if (order) {
-
-                order.status = await orderStatus.getByKey("REVERSED");
-
+                order.status = await orderStatus.getByKey("RECEIVED");
                 await orderUseCase.updateOrderByPaymentId(paymentId, order);
 
-                console.debug("success to cancel order: ", order);
+                console.debug("success to received order: ", order);
             }
-
-            /**/
 
         } catch (error) {
             console.error('Erro ao processar mensagem:', error);
         } finally {
-            // Upon successful processing, delete the message from the queue
             await sqsClient.send(new DeleteMessageCommand({
-                QueueUrl: process.env.AWS_COMPESATION_ORDER_QUEE01,
+                QueueUrl: process.env.AWS_PREPARATION_QUEE01,
                 ReceiptHandle: message.ReceiptHandle,
             }));
-
             console.debug("Message deleted successfully");
         }
     };
 
-    // Função para receber mensagens da fila
     const receiveMessages = async (sqsClient) => {
         try {
             const params = {
-                QueueUrl: process.env.AWS_COMPESATION_ORDER_QUEE01,
+                QueueUrl: process.env.AWS_PREPARATION_QUEE01,
                 MaxNumberOfMessages: 10,
                 VisibilityTimeout: 30,
                 WaitTimeSeconds: 20,
@@ -81,12 +63,10 @@ const listenSQSMessages = async (  orderUseCase: IOrderUseCase, orderStatus: IOr
         } catch (error) {
             console.error('Erro ao receber mensagens:', error);
         } finally {
-            // Chamar a função novamente para continuar escutando a fila
             receiveMessages(sqsClient);
         }
     };
 
-    // Iniciar a escuta da fila
     receiveMessages(sqsClient);
 };
 
