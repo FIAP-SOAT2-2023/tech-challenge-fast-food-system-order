@@ -133,7 +133,7 @@ export class Route {
 
     app.listen(3200, () =>
       console.log(
-        "Server is listening on port 3000 \n SWAGGER: http://localhost:3200/docs"
+        "Server is listening on port 3200 \n SWAGGER: http://localhost:3200/docs"
       )
     );
   }
